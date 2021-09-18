@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MyBlog.Data.Repository;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace MyBlog
 {
@@ -30,6 +32,10 @@ namespace MyBlog
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
 
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
             services.AddTransient<IRepository, Repository>();
             
             services.AddMvc(option => option.EnableEndpointRouting = false);
@@ -42,6 +48,7 @@ namespace MyBlog
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthentication();
             app.UseMvcWithDefaultRoute();
 /*
             app.UseRouting();
