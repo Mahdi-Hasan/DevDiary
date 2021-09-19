@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyBlog.Data.Repository;
 using Microsoft.AspNetCore.Identity;
-
+using MyBlog.Data.FileManager;
 
 namespace MyBlog
 {
@@ -41,9 +41,12 @@ namespace MyBlog
             })
                 //.AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
-
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Auth/Login";
+            });
             services.AddTransient<IRepository, Repository>();
-            
+            services.AddTransient<IFileManager, FileManager>();
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
@@ -54,7 +57,11 @@ namespace MyBlog
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseStaticFiles();
+           
             app.UseAuthentication();
+            
             app.UseMvcWithDefaultRoute();
 /*
             app.UseRouting();

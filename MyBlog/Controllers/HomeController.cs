@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBlog.Data;
+using MyBlog.Data.FileManager;
 using MyBlog.Data.Repository;
 using MyBlog.Models;
 using System;
@@ -13,10 +14,12 @@ namespace MyBlog.Controllers
     public class HomeController : Controller
     {
         private IRepository _repo;
+        private IFileManager _fileManager;
 
-        public HomeController(IRepository repo)
+        public HomeController(IRepository repo, IFileManager fileManager)
         {
             _repo = repo;
+            _fileManager = fileManager;
         }
         public IActionResult Index()
         {
@@ -28,8 +31,14 @@ namespace MyBlog.Controllers
             var post = _repo.GetPost(id);
             return View(post);
         }
+
+        public IActionResult Image(string image)
+        {
+            var mime = image.Substring(image.LastIndexOf('.') + 1);
+            return new FileStreamResult(_fileManager.ImageStream(image), $"image/{mime}");
+        }
         
-        [HttpGet]
+        /*[HttpGet]
         public IActionResult Edit(int? id)
         {
             if(id== null)
@@ -59,6 +68,6 @@ namespace MyBlog.Controllers
             _repo.RemovePost(id);
             await _repo.SaveChangesAync();
             return RedirectToAction("Index");
-        }
+        }*/
     }
 }

@@ -1,25 +1,40 @@
 ﻿@model IEnumerable<Post>
 
-@{ 
+@{
+
 
 }
-<h2>Home page!</h2>
 
-<div>
-    <ul>
-        @foreach(var post in Model)
+@*<h2>Home Page!</h2>
+
+    <img src="~/content/static/antique-art-books-1448709.jpg" width="500"/>*@
+<div class="main-img">
+    <span class="title">DEV Diary</span>
+</div>
+
+<div class="container">
+    @*<ul>
+            @foreach (var post in Model)
             {
-        <li>
-            <a asp-controller="Home" asp-action="Post" asp-route-id="@post.Id">
-                @post.Title
-            </a>
-            <a asp-controller="Home" asp-action="Edit" asp-route-id="@post.Id">
-                Edit
-            </a>
-            <a asp-controller="Home" asp-action="Remove" asp-route-id="@post.Id">
-                Remove
-            </a>
-        </li>
+            <li>
+                <a asp-controller="Home" asp-action="Post" asp-route-id="@post.Id">
+                    @post.Title
+                </a>
+            </li>
             }
-    </ul>
+        </ul>*@
+
+
+
+    @foreach (var post in Model)
+    {
+        var image_path = $"/Image/{post.Image}";
+        <a class="post" asp-controller="Home" asp-action="Post" asp-route-id="@post.Id">
+            <img src="@image_path" />
+            <span class="title">
+                @post.Title
+            </span>
+        </a>
+    }
+
 </div>

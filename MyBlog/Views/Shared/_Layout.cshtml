@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title</title>
+    <link href="~/css/site.css" rel="stylesheet" />
 </head>
 <body>
     <div>
@@ -15,12 +16,12 @@
 
         @if (User.Identity.IsAuthenticated)
         {
-            <a asp-controller="Auth" asp-action="Logout">"Logout"</a>
+            <a asp-controller="Auth" asp-action="Logout">Logout</a>
 
         }
         else
         {
-            <a asp-controller="Auth" asp-action="Login">"Sign in"</a>
+            <a asp-controller="Auth" asp-action="Login">Sign in</a>
 
         }
     </div>
