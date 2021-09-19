@@ -3,6 +3,8 @@ using MyBlog.Data;
 using MyBlog.Data.FileManager;
 using MyBlog.Data.Repository;
 using MyBlog.Models;
+using MyBlog.Models.Comments;
+using MyBlog.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,18 @@ namespace MyBlog.Controllers
             return new FileStreamResult(_fileManager.ImageStream(image), $"image/{mime}");
         }
 
+        public IActionResult Comment(CommentViewModel vm)
+        {
+            if (!ModelState.IsValid)
+                return Post(vm.PostId);
+
+            var post = _repo.GetPost(vm.PostId);
+            if (vm.MainCommentId > 0)
+            {
+                post.MainComments = post.MainComments ?? new List<MainComment>();
+            }
+            return View();
+        }
         [HttpGet]
         public IActionResult Edit(int? id)
         {
