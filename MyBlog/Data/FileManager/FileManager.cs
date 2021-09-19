@@ -34,7 +34,7 @@ namespace MyBlog.Data.FileManager
                 }
 
                 var mime = image.FileName.Substring(image.FileName.LastIndexOf('.'));
-                var fileName = $"img_{DateTime.Now.ToString("dd-MMM-yyyy-HH-mm-ss")}{mime}";
+                var fileName = $"img_{DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss")}{mime}";
 
                 using(var fileStream= new FileStream(Path.Combine(save_path, fileName), FileMode.Create))
                 {
