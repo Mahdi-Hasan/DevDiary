@@ -23,17 +23,11 @@ namespace MyBlog.Controllers
             _repo = repo;
             _fileManager = fileManager;
         }
-
         public IActionResult Index()
         {
             var posts = _repo.GetAllPosts();
             return View(posts);
         }
-        /*public IActionResult Post(int id)
-        {
-            var post = _repo.GetPost(id);
-            return View(post);
-        }*/
 
         [HttpGet]
         public IActionResult Edit(int? id)
@@ -51,8 +45,10 @@ namespace MyBlog.Controllers
                     Id = post.Id,
                     Title= post.Title,
                     Body=post.Body,
-                    CurrentImage= post.Image
-
+                    CurrentImage= post.Image,
+                    Description=post.Description,
+                    Category=post.Category,
+                    Tags=post.Tags
                 });
             }
         }
@@ -65,14 +61,15 @@ namespace MyBlog.Controllers
                 Id = vm.Id,
                 Title = vm.Title,
                 Body = vm.Body,
+                Description = vm.Description,
+                Category = vm.Category,
+                Tags = vm.Tags
             };
 
             if (vm.Image == null)
                 post.Image = vm.CurrentImage;
             else
                 post.Image = await _fileManager.SaveImage(vm.Image);
-
-
 
             if (post.Id > 0)
                 _repo.UpdatePost(post);
@@ -83,7 +80,7 @@ namespace MyBlog.Controllers
             if (await _repo.SaveChangesAync())
                 return RedirectToAction("Index");
             else
-                return View(vm);
+                return View(post);
         }
         [HttpGet]
         public async Task<IActionResult> Remove(int id)
