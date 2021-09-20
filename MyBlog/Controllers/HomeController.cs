@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyBlog.Data;
 using MyBlog.Data.FileManager;
 using MyBlog.Data.Repository;
 using MyBlog.Models;
@@ -7,8 +6,6 @@ using MyBlog.Models.Comments;
 using MyBlog.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyBlog.Controllers
@@ -25,7 +22,7 @@ namespace MyBlog.Controllers
         }
         public IActionResult Index(string category)
         {
-            var posts =string.IsNullOrEmpty(category) ? _repo.GetAllPosts() : _repo.GetAllPosts(category);
+            var posts = string.IsNullOrEmpty(category) ? _repo.GetAllPosts() : _repo.GetAllPosts(category);
             return View(posts);
         }
         public IActionResult Post(int id)
@@ -34,20 +31,19 @@ namespace MyBlog.Controllers
             return View(post);
         }
         [HttpGet("/Image/{image}")]
-        public IActionResult Image(string image)
-        {
-            var mime = image.Substring(image.LastIndexOf('.') + 1);
-            return new FileStreamResult(_fileManager.ImageStream(image), $"image/{mime}");
-        }
+        public IActionResult Image(string image) =>
+             new FileStreamResult(
+                 _fileManager.ImageStream(image),
+                 $"image/{image.Substring(image.LastIndexOf('.') + 1)}");
 
         [HttpPost]
-        public async Task<IActionResult> CommentAsync(CommentViewModel vm)
+        public async Task<IActionResult> Comment(CommentViewModel vm)
         {
             if (!ModelState.IsValid)
-                return Post(vm.PostId);
+                return RedirectToAction("Post", new { id = vm.PostId });
 
             var post = _repo.GetPost(vm.PostId);
-            if (vm.MainCommentId > 0)
+            if (vm.MainCommentId == 0)
             {
                 post.MainComments = post.MainComments ?? new List<MainComment>();
                 post.MainComments.Add(new MainComment
@@ -66,9 +62,10 @@ namespace MyBlog.Controllers
                     Message = vm.Message,
                     Created = DateTime.Now,
                 };
+                _repo.AddSubComment(comment);
             }
             await _repo.SaveChangesAync();
-            return View();
+            return RedirectToAction("Post", new { id = vm.PostId });
         }
         [HttpGet]
         public IActionResult Edit(int? id)

@@ -18,7 +18,7 @@
         @if (!String.IsNullOrEmpty(Model.Image))
         {
             var image_path = $"{base_path}/Image/{Model.Image}";
-            <img src="@image_path" width="500" />
+            <img src="@image_path"  />
             <span class="title">@Model.Title</span>
         }
     </div>
@@ -34,6 +34,18 @@
                 <p>
                     @c.Message --- @c.Created
                 </p>
+                <div style="margin-left: 20px;">
+                    <h4>Sub Comments</h4>
+                    @{
+                        await Html.RenderPartialAsync("_MainComment", new CommentViewModel { PostId = Model.Id, MainCommentId = c.Id });
+                    }
+                    @foreach (var sc in c.SubComments)
+                    {
+                        <p>
+                            @sc.Message --- @sc.Created
+                        </p>
+                    }
+                </div>
             }
     </div>
 </div>
