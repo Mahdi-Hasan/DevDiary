@@ -40,7 +40,8 @@ namespace MyBlog.Controllers
             return new FileStreamResult(_fileManager.ImageStream(image), $"image/{mime}");
         }
 
-        public IActionResult Comment(CommentViewModel vm)
+        [HttpPost]
+        public async Task<IActionResult> CommentAsync(CommentViewModel vm)
         {
             if (!ModelState.IsValid)
                 return Post(vm.PostId);
@@ -49,7 +50,24 @@ namespace MyBlog.Controllers
             if (vm.MainCommentId > 0)
             {
                 post.MainComments = post.MainComments ?? new List<MainComment>();
+                post.MainComments.Add(new MainComment
+                {
+                    Message = vm.Message,
+                    Created = DateTime.Now,
+                });
+
+                _repo.UpdatePost(post);
             }
+            else
+            {
+                var comment = new SubComment
+                {
+                    MainCommentId = vm.MainCommentId,
+                    Message = vm.Message,
+                    Created = DateTime.Now,
+                };
+            }
+            await _repo.SaveChangesAync();
             return View();
         }
         [HttpGet]
