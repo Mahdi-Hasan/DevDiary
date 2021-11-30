@@ -1,3 +1,3 @@
 # DevDiary
-Simple Blog App Using ASP .NET Core
+Simple Blog App Using ASP .NET
 
